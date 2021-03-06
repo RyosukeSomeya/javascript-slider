@@ -1,29 +1,31 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slider Sample</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slider Sample</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="slider-body">
-        <ul id="slider-wrap">
-            <li class="slider-item"><img src="img/sample1.png" alt="サンプル画像1" data-index="0"></li>
-            <li class="slider-item"><img src="img/sample2.png" alt="サンプル画像2" data-index="1"></li>
-            <li class="slider-item"><img src="img/sample3.png" alt="サンプル画像3" data-index="2"></li>
-        </ul>
-    </div>
-    <ul id="page-nation">
-        <li class="page-nation-item"></li>
-        <li class="page-nation-item"></li>
-        <li class="page-nation-item"></li>
+  <div id="slider-body">
+    <ul id="slider-wrap">
+        <li class="slider-item"><img src="img/sample1.png" alt="サンプル画像1" data-index="0"></li>
+        <li class="slider-item"><img src="img/sample2.png" alt="サンプル画像2" data-index="1"></li>
+        <li class="slider-item"><img src="img/sample3.png" alt="サンプル画像3" data-index="2"></li>
     </ul>
-    <div class="btn-wrap">
-        <button id="prev-btn">prev</button>
-        <button id="next-btn">next</button>
-    </div>
-    <script src="js/slider.js"></script>
+  </div>
+  <ul id="page-nation">
+    <li class="page-nation-item"></li>
+    <li class="page-nation-item"></li>
+    <li class="page-nation-item"></li>
+  </ul>
+  <div class="btn-wrap">
+    <button class="ctrl-btn" id="prev-btn">prev</button>
+    <button class="ctrl-btn" id="next-btn">next</button>
+    <button class="ctrl-btn" id="stop-btn">stop</button>
+    <button class="ctrl-btn" id="restart-btn">restart</button>
+  </div>
+  <script src="js/slider.js"></script>
 </body>
 </html>
