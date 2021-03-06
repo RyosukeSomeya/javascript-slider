@@ -56,7 +56,7 @@ img {
   background: #dedede;
   border-radius: 50%;
 }
-.page-nation-item.active {
+.pagenation-item.active {
   background: #FF6565;
 }
 

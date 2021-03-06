@@ -59,27 +59,26 @@ class Slider {
     this.sliderWrapElem = document.getElementById('slider-wrap');
     // スライダーに挿入する要素を格納する
     this.sliderItems = [];
+
     // スライダー用のli要素を生成
     imagesList.forEach((image, index) => {
-      const elem = `<li class="slider-item"><img src="img/${image.name}" alt="${image.alt}" data-index="${index}"></li>`;
+      const elem = `<li class="slider-item" data-index="${index}"><img src="img/${image.name}" alt="${image.alt}"></li>`;
       this.sliderItems.push(elem);
       this.sliderItemsLength = this.sliderItems.length;
     });
     // ループ用に前後に要素を追加
-    const forwardItems = this.sliderItems.slice(-2);
-    const backwardItems = this.sliderItems.slice(0, 2);
+    const forwardItems = this.sliderItems.slice(-1);
     // 初期値としてsliderに挿入されるli要素
     const insertSliderItems = [
       ...forwardItems,
       ...this.sliderItems,
-      ...backwardItems
     ];
     // DOMへセット
     insertSliderItems.forEach(insertSliderItem => {
       this.sliderWrapElem.insertAdjacentHTML('beforeend', insertSliderItem);
     })
     // 表示画像位置調整
-    this._setOffset();
+    document.querySelector('.slider-item').style.marginLeft = '-100%';
     // ページネーション設定
     pagenation ? this._setPagenation(this.sliderItems) : "";
     // スワイプ設定
@@ -92,8 +91,25 @@ class Slider {
 
   next() { // 左送り
     // 現在のスライダー内のli要素を全取得
-    // const firstElem = document.querySelectorAll('.slider-item');
-    // firstElem.style.marginLeft = "-100%"
+    const currentSliderElems = document.querySelectorAll('.slider-item');
+    // 最後尾の要素を取得
+    const lastElem = currentSliderElems[currentSliderElems.length-1];
+
+    // スライド実行
+    currentSliderElems[1].style.marginLeft = "-100%";
+
+    // ページネーション実行
+    // スライド後表示されるの画像のindex
+    const currentDisplayElemIndex = Number(currentSliderElems[2].getAttribute('data-index'));
+    this._changePagenation(currentDisplayElemIndex, this.sliderItemsLength);
+
+    // 最後尾の要素のindexを取得
+    let lastElemIndex = Number(lastElem.getAttribute('data-index'));
+    // スライダー要素最後のindexであれば、0にしてループする。
+    lastElemIndex === this.sliderItemsLength - 1 ? lastElemIndex = -1: lastElemIndex;
+    this.sliderWrapElem.insertAdjacentHTML('beforeend', this.sliderItems[lastElemIndex + 1]); // 最後尾に次の要素追加
+    // 先頭の要素を削除
+    currentSliderElems[0].remove();
   }
 
   prev() { // 右送り
@@ -101,7 +117,7 @@ class Slider {
   }
 
   autoPlay(timer) { // 自動再生
-    console.log(timer)
+    a(timer)
   }
 
   stop() { // 自動再生停止
@@ -112,15 +128,6 @@ class Slider {
 
   }
 
-  _setOffset() {
-    // スライダー画像全取得
-    const targetElems = document.querySelectorAll('.slider-item');
-    // 最初の2要素をずらしておく
-    for (let i = 0; i < 2; i++) {
-      targetElems[i].style.marginLeft = '-100%';
-    }
-  }
-
   _setPagenation(sliderItems) {
     // ページネーション対象要素取得
     const pagenationWrap = document.getElementById('pagenation');
@@ -128,6 +135,29 @@ class Slider {
       sliderItems.forEach(() => pagenationWrap.insertAdjacentHTML('beforeend', '<li class="pagenation-item"></li>'))
     } else {
       console.error('idを"pagenation"と設定した、空のul要素が必要です。')
+    }
+    // ページネーション初期化
+    this._changePagenation(0, sliderItems.length)
+  }
+
+  _changePagenation(currentDisplayElemIndex, elementsLength, change = 'next') {
+    console.log('クリック時に表示されている要素のindex: ' + currentDisplayElemIndex)
+    // 全てのページネーション要素を取得
+    const pagenations = document.querySelectorAll('.pagenation-item');
+    if (change === 'next') {
+      pagenations[currentDisplayElemIndex].classList.add('active');
+      if (currentDisplayElemIndex !== 0) {
+        pagenations[currentDisplayElemIndex-1].classList.remove('active');
+      } else {
+        pagenations[elementsLength-1].classList.remove('active');
+      }
+    } else {
+      // pagenations[currentDisplayElemIndex].classList.remove('active');
+      // if (currentDisplayElemIndex !== 0) {
+      //   pagenations[currentDisplayElemIndex-1].classList.add('active');
+      // } else {
+      //   pagenations[elementsLength-1].classList.add('active');
+      // }
     }
   }
 }
@@ -141,8 +171,9 @@ const imagesList = [
 const slider = new Slider(imagesList);
 
 const nextBtn = document.getElementById('next-btn');
-console.log(nextBtn)
+
 nextBtn.addEventListener('click', ()=> {
+    console.log('next')
     slider.next();
 });
 // console.log(slider);
