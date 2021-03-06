@@ -1,8 +1,9 @@
-// ======================================================================
-// ココから
-// ======================================================================
-
-class Slider {
+/**
+ * @file 無限ループスライダークラス
+ * @author Ryosuke Someya <ryosuke.someya.0618@gmail.com>
+ * @version 1.0.0
+ */
+class infiniteSlider {
   constructor(imagesList, pagenation = true, swipe = true) {
     // スライダー初期化処理
     // スライダーの枠の要素
@@ -30,9 +31,9 @@ class Slider {
     // 表示画像位置調整
     document.querySelector('.slider-item').style.marginLeft = '-100%';
     // ページネーション設定
-    pagenation ? this._setPagenation(this.sliderItems) : "";
+    pagenation ? this._setPagenation(this.sliderItems) : '';
     // スワイプ設定
-    swipe ? this._setSwipe() : "";
+    swipe ? this._setSwipe('slider-body') : '';
   }
 
   next() { // 左送り
@@ -141,8 +142,34 @@ class Slider {
     }
   }
 
-  _setSwipe() {
+  _setSwipe(elem) {
+    let t = document.getElementById(elem);
+    let startX;
+    let startY;
+    let moveX;
+    let moveY;
+    let dist = 30;
 
+    t.addEventListener('touchstart', e => {
+      e.preventDefault();
+      startX = e.touches[0].pageX;
+      startY = e.touches[0].pageY;
+    });
+
+    t.addEventListener('touchmove', e => {
+      e.preventDefault();
+      moveX = e.changedTouches[0].pageX;
+      moveY = e.changedTouches[0].pageY;
+    });
+
+
+    t.addEventListener('touchend', e => {
+      if (startX > moveX && startX > moveX + dist) {
+        this.next();
+      } else if (startX < moveX && startX + dist < moveX) {
+        this.prev();
+      }
+    });
   }
 }
 
@@ -155,7 +182,7 @@ const imagesList = [
   { name: 'sample6.png', alt: 'サンプル画像6'},
 ]
 
-const slider = new Slider(imagesList);
+const slider = new infiniteSlider(imagesList);
 slider.autoPlay(3000);
 
 const nextBtn = document.getElementById('next-btn');
