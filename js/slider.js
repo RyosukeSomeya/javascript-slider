@@ -1,53 +1,3 @@
-let sliderId = null; // setIntervalのID
-let count = 0;
-let isRunning = false; // 動作中判定フラグ
-
-function autoPlay() { // 自動再生
-  sliderId = setInterval(() => {
-    console.log(count)
-    count++;
-  }, 1000);
-  // log for check
-  console.log('auto started sliderId: ' + sliderId);
-  console.log('isRunning: ' + isRunning);
-  return true;
-}
-
-function stop() { // 停止
-  clearInterval(sliderId)
-  isRunning = false;
-  // log for check
-  console.log('stopped sliderId: ' + sliderId);
-  console.log('isRunning: ' + isRunning);
-  return false;
-}
-
-function restart() { // 自動再生再開
-  if(!isRunning) {
-    isRunning　= autoPlay();
-    // log for check
-    console.log('restarted sliderId: ' + sliderId);
-    console.log('isRunning: ' + isRunning);
-  }
-}
-
-
-
-const stopBtn = document.getElementById('stop-btn');
-stopBtn.addEventListener('click', ()=> {
-    isRunning = stop();
-});
-
-const restartBtn = document.getElementById('restart-btn');
-restartBtn.addEventListener('click', ()=> {
-    isRunning = autoPlay();
-    console.log('isRunning: ' + isRunning);
-});
-
-// 初期実行
-// isRunning = autoPlay();
-// console.log('isRunning: ' + isRunning);
-
 // ======================================================================
 // ココから
 // ======================================================================
@@ -83,8 +33,7 @@ class Slider {
     pagenation ? this._setPagenation(this.sliderItems) : "";
     // スワイプ設定
     // pageNation ? this._setSwipe() : "";
-    // autoPlay実行時使用
-    this.sliderId = null; // setIntervalのID
+    // this.sliderId = null; // setIntervalのID
     this.isAutoplay = false; // autoPlay判定フラグ
     // 現在表示中の要素のindex
   }
@@ -94,7 +43,7 @@ class Slider {
     const currentSliderElems = document.querySelectorAll('.slider-item');
     // 最後尾の要素を取得
     const lastElem = currentSliderElems[currentSliderElems.length-1];
-    
+
     // スライド実行
     currentSliderElems[1].style.marginLeft = "-100%";
 
@@ -136,15 +85,30 @@ class Slider {
   }
 
   autoPlay(timer) { // 自動再生
-
+    this.sliderId = setInterval(() => {
+      console.log(this.isAutoplay)
+      if (this.isAutoplay) {
+        this.next();
+      } else {
+        console.log('停止中: ' + this.isAutoplay);
+      }
+    }, timer);
+    // log for check
+    this.isAutoplay = true;
+    console.log('auto started sliderId: ' + this.sliderId);
+    console.log('isAutoplay: ' + this.isAutoplay);
   }
 
-  stop() { // 自動再生停止
-
+  pause() { // 自動再生停止
+    this.isAutoplay = false;
   }
 
   restart() { // 自動再生再開
+    this.isAutoplay = true;
+  }
 
+  stop() { // 自動再生停止
+    clearInterval(this.sliderId)
   }
 
   _setPagenation(sliderItems) {
@@ -191,20 +155,33 @@ const imagesList = [
 ]
 
 const slider = new Slider(imagesList);
+slider.autoPlay(2000);
 
 const nextBtn = document.getElementById('next-btn');
-
-nextBtn.addEventListener('click', ()=> {
-    console.log('next')
-    slider.next();
+nextBtn.addEventListener('click', () => {
+  slider.next();
 });
+
 const prevBtn = document.getElementById('prev-btn');
-
-prevBtn.addEventListener('click', ()=> {
-    console.log('prev')
-    slider.prev();
+prevBtn.addEventListener('click', () => {
+  slider.prev();
 });
-// console.log(slider);
+
+const pauseBtn = document.getElementById('pause-btn');
+pauseBtn.addEventListener('click', () => {
+  slider.pause();
+});
+
+const restartBtn = document.getElementById('restart-btn');
+restartBtn.addEventListener('click', () => {
+    slider.restart();
+});
+
+const stopBtn = document.getElementById('stop-btn');
+stopBtn.addEventListener('click', () => {
+    slider.stop();
+    location.reload();
+});
 
 
 
