@@ -32,10 +32,7 @@ class Slider {
     // ページネーション設定
     pagenation ? this._setPagenation(this.sliderItems) : "";
     // スワイプ設定
-    // pageNation ? this._setSwipe() : "";
-    // this.sliderId = null; // setIntervalのID
-    this.isAutoplay = false; // autoPlay判定フラグ
-    // 現在表示中の要素のindex
+    swipe ? this._setSwipe() : "";
   }
 
   next() { // 左送り
@@ -143,6 +140,10 @@ class Slider {
       }
     }
   }
+
+  _setSwipe() {
+
+  }
 }
 
 const imagesList = [
@@ -155,7 +156,7 @@ const imagesList = [
 ]
 
 const slider = new Slider(imagesList);
-slider.autoPlay(2000);
+slider.autoPlay(3000);
 
 const nextBtn = document.getElementById('next-btn');
 nextBtn.addEventListener('click', () => {
@@ -167,21 +168,23 @@ prevBtn.addEventListener('click', () => {
   slider.prev();
 });
 
-const pauseBtn = document.getElementById('pause-btn');
-pauseBtn.addEventListener('click', () => {
-  slider.pause();
-});
-
-const restartBtn = document.getElementById('restart-btn');
-restartBtn.addEventListener('click', () => {
-    slider.restart();
-});
-
 const stopBtn = document.getElementById('stop-btn');
 stopBtn.addEventListener('click', () => {
     slider.stop();
-    location.reload();
 });
+
+const startBtn = document.getElementById('start-btn');
+startBtn.addEventListener('click', () => {
+    slider.autoPlay(3000);
+});
+
+const pauseArea = document.getElementById('slider-body');
+pauseArea.addEventListener('mouseover', () => {
+  slider.pause();
+})
+pauseArea.addEventListener('mouseout', () => {
+  slider.restart();
+})
 
 
 
