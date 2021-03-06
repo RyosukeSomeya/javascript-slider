@@ -94,7 +94,7 @@ class Slider {
     const currentSliderElems = document.querySelectorAll('.slider-item');
     // 最後尾の要素を取得
     const lastElem = currentSliderElems[currentSliderElems.length-1];
-
+    
     // スライド実行
     currentSliderElems[1].style.marginLeft = "-100%";
 
@@ -113,11 +113,30 @@ class Slider {
   }
 
   prev() { // 右送り
+    // 現在のスライダー内のli要素を全取得
+    const currentSliderElems = document.querySelectorAll('.slider-item');
+    // 先頭の要素を取得
+    const firstElem = currentSliderElems[0];
+    // 先頭の要素のindexを取得
+    let firstElemIndex = Number(firstElem.getAttribute('data-index'));
+    // console.log(firstElemIndex)
+    // スライダー要素先頭のindexが0であれば、要素最後のindexにしてループする。
+    firstElemIndex === 0 ? firstElemIndex = this.sliderItemsLength : firstElemIndex;
+    this.sliderWrapElem.insertAdjacentHTML('afterbegin', this.sliderItems[firstElemIndex - 1]); // 先頭に次の要素追加
+    // 最新の戦闘要素を取得
+    const newSliderElems = document.querySelectorAll('.slider-item');
+    // スライド実行
+    newSliderElems[0].style.marginLeft = "-100%";
+    newSliderElems[1].style.marginLeft = "";
 
+    // ページネーション実行
+    // スライド後表示されるの画像のindex
+    const currentDisplayElemIndex = Number(currentSliderElems[1].getAttribute('data-index'));
+    this._changePagenation(currentDisplayElemIndex, this.sliderItemsLength, "prev");
   }
 
   autoPlay(timer) { // 自動再生
-    a(timer)
+
   }
 
   stop() { // 自動再生停止
@@ -141,7 +160,6 @@ class Slider {
   }
 
   _changePagenation(currentDisplayElemIndex, elementsLength, change = 'next') {
-    console.log('クリック時に表示されている要素のindex: ' + currentDisplayElemIndex)
     // 全てのページネーション要素を取得
     const pagenations = document.querySelectorAll('.pagenation-item');
     if (change === 'next') {
@@ -152,12 +170,13 @@ class Slider {
         pagenations[elementsLength-1].classList.remove('active');
       }
     } else {
-      // pagenations[currentDisplayElemIndex].classList.remove('active');
-      // if (currentDisplayElemIndex !== 0) {
-      //   pagenations[currentDisplayElemIndex-1].classList.add('active');
-      // } else {
-      //   pagenations[elementsLength-1].classList.add('active');
-      // }
+      console.log(currentDisplayElemIndex)
+      pagenations[currentDisplayElemIndex].classList.remove('active');
+      if (currentDisplayElemIndex !== 0) {
+        pagenations[currentDisplayElemIndex-1].classList.add('active');
+      } else {
+        pagenations[elementsLength-1].classList.add('active');
+      }
     }
   }
 }
@@ -166,6 +185,9 @@ const imagesList = [
   { name: 'sample1.png', alt: 'サンプル画像1'},
   { name: 'sample2.png', alt: 'サンプル画像2'},
   { name: 'sample3.png', alt: 'サンプル画像3'},
+  { name: 'sample4.png', alt: 'サンプル画像4'},
+  { name: 'sample5.png', alt: 'サンプル画像5'},
+  { name: 'sample6.png', alt: 'サンプル画像6'},
 ]
 
 const slider = new Slider(imagesList);
@@ -175,6 +197,12 @@ const nextBtn = document.getElementById('next-btn');
 nextBtn.addEventListener('click', ()=> {
     console.log('next')
     slider.next();
+});
+const prevBtn = document.getElementById('prev-btn');
+
+prevBtn.addEventListener('click', ()=> {
+    console.log('prev')
+    slider.prev();
 });
 // console.log(slider);
 
