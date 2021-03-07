@@ -26,5 +26,59 @@
     <button class="ctrl-btn" id="stop-btn">stop</button>
   </div>
   <script src="js/slider.js"></script>
+  <script>
+    const imagesList = [
+      { name: './img/sample1.png', alt: 'サンプル画像1'},
+      { name: './img/sample2.png', alt: 'サンプル画像2'},
+      { name: './img/sample3.png', alt: 'サンプル画像3'},
+      { name: './img/sample4.png', alt: 'サンプル画像4'},
+      { name: './img/sample5.png', alt: 'サンプル画像5'},
+      { name: './img/sample6.png', alt: 'サンプル画像6'},
+    ]
+
+    const sliderConfig = {
+      sliderImages: imagesList,       // require
+      pagenation: true, 　　　　　　　　 // optional
+      swipe: true,      　　　　　　　　 // optional
+      // sliderElemId: 'slider-wrap', // optional
+      // swipeArea: 'slider-body' 　　 // optional
+    }
+
+    /**
+     * 実行例
+     */
+    const slider = new infiniteSlider(sliderConfig);
+    slider.autoPlay(3000);
+
+    // ボタン操作
+    const nextBtn = document.getElementById('next-btn');
+    nextBtn.addEventListener('click', () => {
+      slider.next();
+    });
+
+    const prevBtn = document.getElementById('prev-btn');
+    prevBtn.addEventListener('click', () => {
+      slider.prev();
+    });
+
+    const stopBtn = document.getElementById('stop-btn');
+    stopBtn.addEventListener('click', () => {
+        slider.stop();
+    });
+
+    const startBtn = document.getElementById('start-btn');
+    startBtn.addEventListener('click', () => {
+        slider.autoPlay(3000);
+    });
+
+    // マウスオーバー操作
+    const pauseArea = document.getElementById('slider-body');
+    pauseArea.addEventListener('mouseover', () => {
+      slider.pause();
+    })
+    pauseArea.addEventListener('mouseout', () => {
+      slider.pause();
+    })
+  </script>
 </body>
 </html>

@@ -4,101 +4,103 @@
  * @version 1.0.0
  */
 class infiniteSlider {
-  constructor(imagesList, pagenation = true, swipe = true) {
+  constructor(sliderConfig) {
     // スライダー初期化処理
-    // スライダーの枠の要素
-    this.sliderWrapElem = document.getElementById('slider-wrap');
-    // スライダーに挿入する要素を格納する
+    const sliderImages   = sliderConfig.sliderImages;
+    const sliderElemId   = sliderConfig.sliderElemId || 'slider-wrap';
+    let pagenationInit = false;
+    let swipeInit      = false;
+    let swipeAreaId    = null;
+
+    if (sliderConfig.pagenation) {
+      pagenationInit = true;
+    }
+    if (sliderConfig.swipe) {
+      swipeInit = true;
+      swipeAreaId = sliderConfig.swipeAreaId || 'slider-wrap';
+    }
+
+    // スライダー構成要素の初期化
+    this.sliderWrapElem = document.getElementById(sliderElemId);
     this.sliderItems = [];
 
     // スライダー用のli要素を生成
-    imagesList.forEach((image, index) => {
-      const elem = `<li class="slider-item" data-index="${index}"><img src="img/${image.name}" alt="${image.alt}"></li>`;
+    sliderImages.forEach((image, index) => {
+      const elem = `<li class="slider-item" data-index="${index}"><img src="${image.name}" alt="${image.alt}"></li>`;
       this.sliderItems.push(elem);
       this.sliderItemsLength = this.sliderItems.length;
     });
-    // ループ用に前後に要素を追加
-    const forwardItems = this.sliderItems.slice(-1);
-    // 初期値としてsliderに挿入されるli要素
+
+    // 初期値としてsliderに挿入されるli要素グループ
+    const forwardItems = this.sliderItems.slice(-1);  // ループ用に前後に要素を追加
     const insertSliderItems = [
       ...forwardItems,
       ...this.sliderItems,
     ];
+
     // DOMへセット
     insertSliderItems.forEach(insertSliderItem => {
       this.sliderWrapElem.insertAdjacentHTML('beforeend', insertSliderItem);
     })
-    // 表示画像位置調整
-    document.querySelector('.slider-item').style.marginLeft = '-100%';
-    // ページネーション設定
-    pagenation ? this._setPagenation(this.sliderItems) : '';
-    // スワイプ設定
-    swipe ? this._setSwipe('slider-body') : '';
+
+    document.querySelector('.slider-item').style.marginLeft = '-100%'; // 表示画像位置調整
+    pagenationInit ? this._initPagenation(this.sliderItems) : '';       // ページネーション設定
+    swipeInit ? this._initSwipe(swipeAreaId) : '';                      // スワイプ設定
   }
 
   next() { // 左送り
-    // 現在のスライダー内のli要素を全取得
-    const currentSliderElems = document.querySelectorAll('.slider-item');
-    // 最後尾の要素を取得
-    const lastElem = currentSliderElems[currentSliderElems.length-1];
+    const currentSliderElems = document.querySelectorAll('.slider-item'); // 現在のスライダー内のli要素を全取得
+    currentSliderElems[1].style.marginLeft = "-100%"; // スライド実行
 
-    // スライド実行
-    currentSliderElems[1].style.marginLeft = "-100%";
-
-    // ページネーション実行
-    // スライド後表示されるの画像のindex
-    const currentDisplayElemIndex = Number(currentSliderElems[2].getAttribute('data-index'));
-    this._changePagenation(currentDisplayElemIndex, this.sliderItemsLength);
+    if (this.pagenation) {
+      const currentDisplayElemIndex = Number(currentSliderElems[2].getAttribute('data-index')); // スライド後表示されるの画像のindex
+      this._changePagenation(currentDisplayElemIndex, this.sliderItemsLength);                  // ページネーション実行
+    }
 
     // 最後尾の要素のindexを取得
-    let lastElemIndex = Number(lastElem.getAttribute('data-index'));
-    // スライダー要素最後のindexであれば、0にしてループする。
-    lastElemIndex === this.sliderItemsLength - 1 ? lastElemIndex = -1: lastElemIndex;
+    let lastElemIndex = Number(currentSliderElems[currentSliderElems.length-1].getAttribute('data-index'));
+    lastElemIndex === this.sliderItemsLength - 1 ? lastElemIndex = -1: lastElemIndex;         // スライダーの最後要素のindexであれば、先頭要素のindexをセット
     this.sliderWrapElem.insertAdjacentHTML('beforeend', this.sliderItems[lastElemIndex + 1]); // 最後尾に次の要素追加
-    // 先頭の要素を削除
-    currentSliderElems[0].remove();
+    currentSliderElems[0].remove(); // 先頭の要素を削除
   }
 
   prev() { // 右送り
-    // 現在のスライダー内のli要素を全取得
-    const currentSliderElems = document.querySelectorAll('.slider-item');
-    // 先頭の要素を取得
-    const firstElem = currentSliderElems[0];
-    // 先頭の要素のindexを取得
-    let firstElemIndex = Number(firstElem.getAttribute('data-index'));
-    // console.log(firstElemIndex)
-    // スライダー要素先頭のindexが0であれば、要素最後のindexにしてループする。
-    firstElemIndex === 0 ? firstElemIndex = this.sliderItemsLength : firstElemIndex;
+    const currentSliderElems = document.querySelectorAll('.slider-item'); // 現在のスライダー内のli要素を全取得
+    let firstElemIndex = Number(currentSliderElems[0].getAttribute('data-index'));    // 先頭の要素のindexを取得
+
+    firstElemIndex === 0 ? firstElemIndex = this.sliderItemsLength : firstElemIndex; // スライダーの先頭要素のindexが0であれば、最後の要素のindexをセット
     this.sliderWrapElem.insertAdjacentHTML('afterbegin', this.sliderItems[firstElemIndex - 1]); // 先頭に次の要素追加
-    // 最新の戦闘要素を取得
-    const newSliderElems = document.querySelectorAll('.slider-item');
-    // スライド実行
-    newSliderElems[0].style.marginLeft = "-100%";
+
+    const newSliderElems = document.querySelectorAll('.slider-item'); // 最新の先頭の要素を取得
+    newSliderElems[0].style.marginLeft = "-100%"; // スライド実行
     newSliderElems[1].style.marginLeft = "";
 
-    // ページネーション実行
-    // スライド後表示されるの画像のindex
-    const currentDisplayElemIndex = Number(currentSliderElems[1].getAttribute('data-index'));
-    this._changePagenation(currentDisplayElemIndex, this.sliderItemsLength, "prev");
+    if (this.pagenation) {
+      const currentDisplayElemIndex = Number(currentSliderElems[1].getAttribute('data-index')); // スライド後表示されるの画像のindex取得
+      this._changePagenation(currentDisplayElemIndex, this.sliderItemsLength, "prev"); // ページネーション実行
+    }
   }
 
   autoPlay(timer) { // 自動再生
+    this.isAutoplay = true;
     this.sliderId = setInterval(() => {
-      console.log(this.isAutoplay)
       if (this.isAutoplay) {
         this.next();
       } else {
         console.log('停止中: ' + this.isAutoplay);
       }
     }, timer);
-    // log for check
-    this.isAutoplay = true;
-    console.log('auto started sliderId: ' + this.sliderId);
-    console.log('isAutoplay: ' + this.isAutoplay);
+    // チェック用
+    // console.log('auto started sliderId: ' + this.sliderId);
+    // console.log('isAutoplay: ' + this.isAutoplay);
   }
 
   pause() { // 自動再生停止
-    this.isAutoplay = false;
+    if (this.isAutoplay) {
+      this.isAutoplay = false;
+    } else {
+      this.isAutoplay = true;
+    }
   }
 
   restart() { // 自動再生再開
@@ -109,16 +111,15 @@ class infiniteSlider {
     clearInterval(this.sliderId)
   }
 
-  _setPagenation(sliderItems) {
-    // ページネーション対象要素取得
-    const pagenationWrap = document.getElementById('pagenation');
+  _initPagenation(sliderItems) {
+    const pagenationWrap = document.getElementById('pagenation'); // ページネーション対象要素取得
     if (pagenationWrap) {
       sliderItems.forEach(() => pagenationWrap.insertAdjacentHTML('beforeend', '<li class="pagenation-item"></li>'))
     } else {
-      console.error('idを"pagenation"と設定した、空のul要素が必要です。')
+      console.error('idを"pagenation"と設定した、空のul要素が必要です。');
     }
-    // ページネーション初期化
-    this._changePagenation(0, sliderItems.length)
+    this._changePagenation(0, sliderItems.length); // ページネーション初期化
+    this.pagenation = true; // ページネーション実行フラグ初期化
   }
 
   _changePagenation(currentDisplayElemIndex, elementsLength, change = 'next') {
@@ -142,7 +143,7 @@ class infiniteSlider {
     }
   }
 
-  _setSwipe(elem) {
+  _initSwipe(elem) {
     let t = document.getElementById(elem);
     let startX;
     let startY;
@@ -172,46 +173,3 @@ class infiniteSlider {
     });
   }
 }
-
-const imagesList = [
-  { name: 'sample1.png', alt: 'サンプル画像1'},
-  { name: 'sample2.png', alt: 'サンプル画像2'},
-  { name: 'sample3.png', alt: 'サンプル画像3'},
-  { name: 'sample4.png', alt: 'サンプル画像4'},
-  { name: 'sample5.png', alt: 'サンプル画像5'},
-  { name: 'sample6.png', alt: 'サンプル画像6'},
-]
-
-const slider = new infiniteSlider(imagesList);
-slider.autoPlay(3000);
-
-const nextBtn = document.getElementById('next-btn');
-nextBtn.addEventListener('click', () => {
-  slider.next();
-});
-
-const prevBtn = document.getElementById('prev-btn');
-prevBtn.addEventListener('click', () => {
-  slider.prev();
-});
-
-const stopBtn = document.getElementById('stop-btn');
-stopBtn.addEventListener('click', () => {
-    slider.stop();
-});
-
-const startBtn = document.getElementById('start-btn');
-startBtn.addEventListener('click', () => {
-    slider.autoPlay(3000);
-});
-
-const pauseArea = document.getElementById('slider-body');
-pauseArea.addEventListener('mouseover', () => {
-  slider.pause();
-})
-pauseArea.addEventListener('mouseout', () => {
-  slider.restart();
-})
-
-
-
