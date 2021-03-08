@@ -43,6 +43,8 @@ const sliderConfig = {
       { name: 'img/sample2.png', alt: 'サンプル画像2'},
   ],
   sliderElemId: 'slider-wrap', // optional
+  slideWidth: '100%',          // optional
+  slideDirection: 'left',          // optional
   pagenation: true,            // optional
   swipe: true,                 // optional
   swipeArea: 'slider-body'     // optional
@@ -65,6 +67,7 @@ const sliderConfig = {
   - 任意のプロパティです。
   - スライド幅の指定です。
     - 親要素に対してどれだけスライドするかを指定できます。(px,%可)
+    - デフォルトは左方向に100%です。
 - pagenation
   - 任意のプロパティです。
   - ページネーションを使用するか指定します。
@@ -101,6 +104,8 @@ const slider = new infiniteSlider(sliderConfig);
 // 実行可能な機能
 // 自動再生(タイマー実行)
 slider.autoPlay(3000); // スライドの間隔はミリ秒で指定
+slider.autoPlay(3000, 'right'); // 第2引数にスライド方向('left' of 'right')を指定可能（未指定の場合はleft）
+
 
 // 一時停止/解除(トグル式)
 slider.pause(); // 内部的にはタイマーは動作継続

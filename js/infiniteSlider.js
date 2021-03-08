@@ -84,11 +84,15 @@ class infiniteSlider {
     }
   }
 
-  autoPlay(timer) { // 自動再生
+  autoPlay(timer, direction = 'left') { // 自動再生
     this.isAutoplay = true;
     this.sliderId = setInterval(() => {
       if (this.isAutoplay) {
-        this.next();
+        if (direction === 'left') {
+          this.next();
+        } else {
+          this.prev();
+        }
       } else {
         console.log('停止中: ' + this.isAutoplay);
       }
