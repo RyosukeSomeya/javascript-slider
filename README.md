@@ -44,7 +44,6 @@ const sliderConfig = {
   ],
   sliderElemId: 'slider-wrap', // optional
   slideWidth: '100%',          // optional
-  slideDirection: 'left',          // optional
   pagenation: true,            // optional
   swipe: true,                 // optional
   swipeArea: 'slider-body'     // optional
