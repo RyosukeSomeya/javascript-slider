@@ -6,8 +6,9 @@
 class infiniteSlider {
   constructor(sliderConfig) {
     // スライダー初期化処理
-    const sliderImages   = sliderConfig.sliderImages;
-    const sliderElemId   = sliderConfig.sliderElemId || 'slider-wrap';
+    const sliderImages = sliderConfig.sliderImages;
+    const sliderElemId = sliderConfig.sliderElemId || 'slider-wrap';
+    this.slideWidth    = sliderConfig.slideWidth || '100%';
     let pagenationInit = false;
     let swipeInit      = false;
     let swipeAreaId    = null;
@@ -28,8 +29,8 @@ class infiniteSlider {
     sliderImages.forEach((image, index) => {
       const elem = `<li class="slider-item" data-index="${index}"><img src="${image.name}" alt="${image.alt}"></li>`;
       this.sliderItems.push(elem);
-      this.sliderItemsLength = this.sliderItems.length;
     });
+    this.sliderItemsLength = this.sliderItems.length;
 
     // 初期値としてsliderに挿入されるli要素グループ
     const forwardItems = this.sliderItems.slice(-1);  // ループ用に前後に要素を追加
@@ -43,14 +44,16 @@ class infiniteSlider {
       this.sliderWrapElem.insertAdjacentHTML('beforeend', insertSliderItem);
     })
 
-    document.querySelector('.slider-item').style.marginLeft = '-100%'; // 表示画像位置調整
+    document.querySelector('.slider-item').style.marginLeft = `-${this.slideWidth}`; // 表示画像位置調整
     pagenationInit ? this._initPagenation(this.sliderItems) : '';       // ページネーション設定
     swipeInit ? this._initSwipe(swipeAreaId) : '';                      // スワイプ設定
   }
 
   next() { // 左送り
+    const slideWidth = this.slideWidth;
+    console.log(slideWidth)
     const currentSliderElems = document.querySelectorAll('.slider-item'); // 現在のスライダー内のli要素を全取得
-    currentSliderElems[1].style.marginLeft = "-100%"; // スライド実行
+    currentSliderElems[1].style.marginLeft = `-${this.slideWidth}`; // スライド実行
 
     if (this.pagenation) {
       const currentDisplayElemIndex = Number(currentSliderElems[2].getAttribute('data-index')); // スライド後表示されるの画像のindex
@@ -72,7 +75,7 @@ class infiniteSlider {
     this.sliderWrapElem.insertAdjacentHTML('afterbegin', this.sliderItems[firstElemIndex - 1]); // 先頭に次の要素追加
 
     const newSliderElems = document.querySelectorAll('.slider-item'); // 最新の先頭の要素を取得
-    newSliderElems[0].style.marginLeft = "-100%"; // スライド実行
+    newSliderElems[0].style.marginLeft = `-${this.slideWidth}`; // スライド実行
     newSliderElems[1].style.marginLeft = "";
 
     if (this.pagenation) {
